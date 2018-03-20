@@ -1,0 +1,18 @@
+branch-defaults:
+  master:
+    environment: gsgSignup-nagzs-env
+    group_suffix: null
+global:
+  application_name: eb-django-express-signup
+  branch: null
+  default_ec2_keyname: instance20march
+  default_platform: Python 3.6
+  default_region: eu-west-1
+  include_git_submodules: true
+  instance_profile: null
+  platform_name: null
+  platform_version: null
+  profile: null
+  repository: null
+  sc: git
+  workspace_type: Application
