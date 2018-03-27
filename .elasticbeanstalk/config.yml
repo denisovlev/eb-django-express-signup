@@ -1,13 +1,13 @@
 branch-defaults:
   master:
-    environment: gsgSignup-nagzs-env
+    environment: gsgSignup-env3
 environment-defaults:
-  gsgSignup-nagzs-env:
+  gsgSignup-env3:
     branch: null
     repository: null
 global:
   application_name: gsg-signup
-  default_ec2_keyname: instance20march
+  default_ec2_keyname: null
   default_platform: arn:aws:elasticbeanstalk:eu-west-1::platform/Python 3.6 running
     on 64bit Amazon Linux/2.6.5
   default_region: eu-west-1
