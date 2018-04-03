@@ -119,7 +119,10 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
-STATIC_URL = '/static/'
+# STATIC_URL = '/static/'
+# STATIC_URL = 'https://s3-eu-west-1.amazonaws.com/eb-django-express-signup-anna/static/'
+STATIC_URL = 'http://d3azrwngzf83u5.cloudfront.net/static/'
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
