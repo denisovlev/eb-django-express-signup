@@ -116,3 +116,21 @@ class Leads(models.Model):
             return response['Items']
         logger.error('Unknown error retrieving items from database.')
         return None
+
+class Tweets(models.Model):
+
+    def get_tweets(self):
+        try:
+            dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+            table_d = dynamodb.Table('twitter-geo')
+        except Exception as e:
+            logger.error(
+                'Error connecting to database table: ' + (e.fmt if hasattr(e, 'fmt') else '') + ','.join(e.args))
+            return None
+        response = table_d.scan(
+            ReturnConsumedCapacity='TOTAL',
+        )
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return response['Items']
+        logger.error('Unknown error retrieving items from database.')
+        return None
