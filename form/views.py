@@ -35,13 +35,39 @@ from django.conf import settings
 
 BASE_DIR = getattr(settings, "BASE_DIR", None)
 
-
 def chart(request):
+    domain = request.GET.get('domain')
+    preview = request.GET.get('preview')
     leads = Leads()
-    items = leads.get_lead_domains()
-    freq = [int(item["num"]) for item in items]
-    labels = [item["domain"] for item in items]
-    data = {'data': freq, 'x': labels}
-    bar = vincent.Bar(data, iter_idx='x')
-    content = json.dumps(bar.to_json())
-    return render(request, 'chart.html', {'items': items, 'content': content})
+    domain_count = Counter()
+    if domain or preview:
+        items = leads.get_leads(domain, preview)
+        domain_count.update([item['email'].split('@')[1] for item in items])
+        print(domain_count)
+        domain_freq = domain_count.most_common(15)
+        if len(domain_freq) == 0:
+            return HttpResponse('No items to show', status=200)
+        labels, freq = zip(*domain_freq)
+        data = {'data': freq, 'x': labels}
+        bar = vincent.Bar(data, iter_idx='x')
+        content = json.dumps(bar.to_json())
+        return render(request, 'chart.html', {'items': items, 'content': content})
+    else:
+        items = leads.get_lead_domains()
+        print(items)
+        for item in items:
+            print(item)
+            num = int(item["num"])
+            print(num)
+            for i in range(0,num):
+                print(i)
+                domain_count.update([item["domain"]])
+
+        domain_freq = domain_count.most_common(15)
+        if len(domain_freq) == 0:
+            return HttpResponse('No items to show', status=200)
+        labels, freq = zip(*domain_freq)
+        data = {'data': freq, 'x': labels}
+        bar = vincent.Bar(data, iter_idx='x')
+        content = json.dumps(bar.to_json())
+        return render(request, 'chart.html', {'items': items, 'content': content})
