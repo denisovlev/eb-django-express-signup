@@ -116,3 +116,43 @@ class Leads(models.Model):
             return response['Items']
         logger.error('Unknown error retrieving items from database.')
         return None
+
+class Tweets(models.Model):
+
+    def get_tweets(self, request):
+
+        expression_attribute_values = {}
+        FilterExpression = []
+
+        startdate = request.GET.get("from",False)
+        enddate = request.GET.get("to", False)
+
+        if startdate:
+            expression_attribute_values[':sd'] = startdate
+            FilterExpression.append('created_at >= :sd')
+        if enddate:
+            expression_attribute_values[':ed'] = enddate
+            FilterExpression.append('created_at < :ed')
+        if expression_attribute_values and FilterExpression:
+            print(expression_attribute_values)
+            print(FilterExpression)
+            response = self.table().scan(
+                FilterExpression=' and '.join(FilterExpression),
+                ExpressionAttributeValues=expression_attribute_values,
+            )
+        else:
+            response = self.table().scan(
+                ReturnConsumedCapacity='TOTAL',
+            )
+
+        if response['ResponseMetadata']['HTTPStatusCode'] == 200:
+            return response['Items']
+        logger.error('Unknown error retrieving items from database.')
+        return None
+
+    def table(self):
+        dynamodb = boto3.resource('dynamodb', region_name=AWS_REGION)
+        return dynamodb.Table('twitter-geo')
+
+
+

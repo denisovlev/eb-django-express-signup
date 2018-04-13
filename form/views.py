@@ -1,10 +1,13 @@
 import json
 import os
 from collections import Counter
+import boto3
+from io import BytesIO
+
 
 from django.http import HttpResponse
 from django.shortcuts import render
-from .models import Leads
+from .models import Leads, Tweets
 
 def home(request):
     return render(request, 'index.html')
@@ -71,3 +74,33 @@ def chart(request):
         bar = vincent.Bar(data, iter_idx='x')
         content = json.dumps(bar.to_json())
         return render(request, 'chart.html', {'items': items, 'content': content})
+
+def map(request):
+
+    geo_data = {
+        "type": "FeatureCollection",
+        "features": []
+    }
+    tweets = Tweets()
+    for tweet in tweets.get_tweets(request):
+
+       geo_json_feature = {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [tweet['c0'], tweet['c1']]
+            },
+            "properties": {
+                "text": tweet['text'],
+                "created_at": tweet['created_at']
+            }
+        }
+       geo_data['features'].append(geo_json_feature)
+
+    data = BytesIO(str.encode(json.dumps(geo_data, indent=4)))
+
+    s3 = boto3.resource('s3')
+    bucket = s3.Bucket('eb-django-express-signup-anna')
+    bucket.upload_fileobj(data, 'static/geo_data.json', ExtraArgs={'ACL': 'public-read'})
+
+    return render(request, 'map.html')
