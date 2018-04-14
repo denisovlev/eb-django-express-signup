@@ -39,6 +39,9 @@ from django.conf import settings
 BASE_DIR = getattr(settings, "BASE_DIR", None)
 
 def chart(request):
+    return render(request, 'chart.html')
+
+def chart_data(request):
     domain = request.GET.get('domain')
     preview = request.GET.get('preview')
     leads = Leads()
@@ -53,8 +56,6 @@ def chart(request):
         labels, freq = zip(*domain_freq)
         data = {'data': freq, 'x': labels}
         bar = vincent.Bar(data, iter_idx='x')
-        content = json.dumps(bar.to_json())
-        return render(request, 'chart.html', {'items': items, 'content': content})
     else:
         items = leads.get_lead_domains()
         print(items)
@@ -62,7 +63,7 @@ def chart(request):
             print(item)
             num = int(item["num"])
             print(num)
-            for i in range(0,num):
+            for i in range(0, num):
                 print(i)
                 domain_count.update([item["domain"]])
 
@@ -72,8 +73,7 @@ def chart(request):
         labels, freq = zip(*domain_freq)
         data = {'data': freq, 'x': labels}
         bar = vincent.Bar(data, iter_idx='x')
-        content = json.dumps(bar.to_json())
-        return render(request, 'chart.html', {'items': items, 'content': content})
+    return HttpResponse(bar.to_json(), content_type="application/json")
 
 def map(request):
 
