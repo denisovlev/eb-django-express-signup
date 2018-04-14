@@ -4,4 +4,12 @@
 .elasticbeanstalk/*
 !.elasticbeanstalk/*cfg.yml
 !.elasticbeanstalk/*.global.yml
+*.pyc
 .env
+
+__pycache__/
+*.py[cod]
+*$py.class
+
+static/*.json
+/*.json
