@@ -7,6 +7,7 @@
     <script src="http://d3js.org/topojson.v1.min.js"></script>
     <script src="http://d3js.org/d3.geo.projection.v0.min.js" charset="utf-8"></script>
     <script src="http://trifacta.github.com/vega/vega.js"></script>
+    <script src="http://code.jquery.com/jquery-2.1.0.min.js"></script>
 </head>
 <body>
 <div id="vis"></div>
@@ -18,10 +19,10 @@
             chart({el: "#vis"}).update();
         });
     }
-    {% autoescape off %}
-    var spec = JSON.parse({{ content }});
-    parse(spec);
-    {% endautoescape %}
+
+    $.getJSON("chart_data.json" + window.location.search, function (spec) {
+        parse(spec);
+    });
 
 </script>
 </html>
